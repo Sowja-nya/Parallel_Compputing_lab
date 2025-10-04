@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <mpi.h>
+
+int main(int argc, char* argv[]) {
+    int rank, size;
+    int sum_reduce = 0;
+    int sum_allreduce = 0;
+
+    MPI_Init(&argc, &argv);               
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank); 
+    MPI_Comm_size(MPI_COMM_WORLD, &size); 
+
+    int value = rank; 
+
+    
+    MPI_Reduce(&value, &sum_reduce, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    if (rank == 0) {
+        printf("MPI_Reduce result at Process 0: Sum of ranks = %d\n", sum_reduce);
+    }
+    MPI_Allreduce(&value, &sum_allreduce, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+
+    if (rank == 0) {
+        printf("MPI_Allreduce result at all processes: Sum of ranks = %d\n", sum_allreduce);
+    }
+
+    MPI_Finalize(); 
+    return 0;
+}
